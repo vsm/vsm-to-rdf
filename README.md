@@ -8,6 +8,8 @@
 Converts VSM-JSON (=output emitted by a
 [vsm-box](https://github.com/vsmjs/vsm-box) web-component) to
 [RDF](https://www.w3.org/RDF/) [Turtle](https://www.w3.org/TR/turtle/) format.
+<br>
+It can process a JSON String, but also a not-stringified JavaScript Object.
 
 Note that this module does not check for syntactic errors in the
 VSM-JSON, so any validity checks are the responsibilty of external code.
@@ -44,7 +46,7 @@ but:
 VSMO's small set of primitive relations (or _framework_-only relations)
 make the semantics of VSM-connectors explicit in RDF.
 
-VSMO's URIs have the prefix `http://www.w3.org/2019/vsmo/`,
+VSMO's URIs have the prefix `http://www.w3id.org/vsmo/`,
 which we will denote by `vsmo:`.
 
 The text below elaborates some of VSM's semantics in detail, which is necessary
@@ -354,7 +356,7 @@ The following piece of information is represented with just two tridents:
 
 ![](imgs/example-simple.png)
 
-&bull; As VSM-JSON:
+&bull; As VSM-JSON (written in not-serialized, JS-Object form):
 ```
 {
   terms: [
@@ -374,7 +376,7 @@ The following piece of information is represented with just two tridents:
 &bull; As RDF Turtle:
 ```
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX vsmo: <http://www.w3.org/2019/vsmo/>
+PREFIX vsmo: <http://www.w3id.org/vsmo/>
 
 http://db.ex/00 a http://ont.ex/John .
 http://db.ex/01 a http://ont.ex/to-eat .
@@ -422,23 +424,22 @@ http://db.ex/03 vsmo:has-agent http://db.ex/01 ; vsmo:acts-on http://db.ex/04 .
 &bull; As RDF Turtle:
 ```
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> .
-PREFIX vsmo: <http://www.w3.org/2019/vsmo/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX vsmo: <http://www.w3id.org/vsmo/>
 
-http://db.ex/00 a http://ont.ex/John .
-http://db.ex/01 a http://ont.ex/to-say .
-http://db.ex/02 a http://ont.ex/duck .
-http://db.ex/03 a http://ont.ex/to-have-label .
-http://db.ex/05 a http://ont.ex/to-imply .
-http://db.ex/06 a http://ont.ex/John .
-http://db.ex/07 a http://ont.ex/to-know .
-http://db.ex/08 a http://x/08 .
+http://inst.x/00 a http://ont.ex/John .
+http://inst.x/01 a http://ont.ex/to-say .
+http://inst.x/03 a http://ont.ex/to-have-label .
+http://inst.x/05 a http://ont.ex/to-imply .
+http://inst.x/06 a http://ont.ex/John .
+http://inst.x/07 a http://ont.ex/to-know .
+http://inst.x/08 a http://class.x/08 .
 
-http://db.ex/03 vsmo:has-agent http://db.ex/02 ; "canard"^^xsd:string .
-http://db.ex/01 vsmo:has-agent http://db.ex/00 ; vsmo:acts-on http://db.ex/03 .
-http://db.ex/07 vsmo:has-agent http://db.ex/06 ; vsmo:acts-on http://db.ex/08 .
-http://db.ex/05 vsmo:has-agent http://db.ex/01 ; vsmo:acts-on http://db.ex/07 .
-http://db.ex/06 vsmo:has-parent http://db.ex/00 .
+http://inst.x/03 vsmo:has-agent http://ont.ex/duck ; vsmo:acts-on "canard"^^xsd:string .
+http://inst.x/01 vsmo:has-agent http://inst.x/00 ; vsmo:acts-on http://inst.x/03 .
+http://inst.x/07 vsmo:has-agent http://inst.x/06 ; vsmo:acts-on http://inst.x/08 .
+http://inst.x/05 vsmo:has-agent http://inst.x/01 ; vsmo:acts-on http://inst.x/07 .
+http://inst.x/06 vsmo:has-parent http://inst.x/00 .
 ```
 
 
@@ -488,7 +489,7 @@ a list connector, and a coreference connector:
 &bull; As RDF Turtle:
 ```
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX vsmo: <http://www.w3.org/2019/vsmo/>
+PREFIX vsmo: <http://www.w3id.org/vsmo/>
 
 http://db.ex/00 a http://ont.ex/John .
 http://db.ex/01 a http://ont.ex/to-push .
@@ -509,8 +510,8 @@ http://db.ex/01 vsmo:has-agent http://db.ex/00 ; vsmo:acts-on http://db.ex/02 .
 http://db.ex/07 vsmo:has-agent http://db.ex/06 ; vsmo:acts-on http://db.ex/08 .
 [a vsmo:HasQuality] vsmo:has-agent http://db.ex/11 ; vsmo:acts-on http://db.ex/10 .
 http://db.ex/12 vsmo:has-agent http://db.ex/11 .
-http://db.ex/05 vsmo:has-agent http://db.ex/01 ; vsmo:acts-on http://db.ex/09 .
 http://db.ex/09 vsmo:has-first-element http://db.ex/07 .
 http://db.ex/07 vsmo:has-next-element http://db.ex/12 .
+http://db.ex/05 vsmo:has-agent http://db.ex/01 ; vsmo:acts-on http://db.ex/09 .
 http://db.ex/06 vsmo:has-parent http://db.ex/02 .
 ```
