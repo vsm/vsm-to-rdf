@@ -1,6 +1,7 @@
 # vsm-to-rdf
 
 
+<br>
 
 ## Overview
 
@@ -18,8 +19,11 @@ These will be replaced by dummy
 in the RDF output.
 
 
+<br>
 
 ## The VSM ontology: mapping VSM semantics to RDF
+
+### i. Intro
 
 This module uses the VSM Ontology (VSMO) [to be created],
 which provides '_primitive_ relations'
@@ -48,7 +52,7 @@ to correctly interpret the semantics of the corresponding RDF-representation.
 
 
 
-### VSMO primitive relations
+### ii. VSMO primitive relations
 
 VSMO defines the following primitive relations, as Instances of
 `rdf:Property`:
@@ -114,7 +118,7 @@ VSMO defines the following primitive relations, as Instances of
       [BFO](https://en.wikipedia.org/wiki/Basic_Formal_Ontology).
 
 
-### VSMO Classes
+### iii. VSMO Classes
 
 VSMO defines the following Classes, as Instances of `rdfs:Class`:
 - `vsmo:ActiveRelation`:<br>
@@ -130,7 +134,7 @@ VSMO defines the following Classes, as Instances of `rdfs:Class`:
   as it plays the same role between a subject and an object term.
 
 
-### Critical remarks ---
+### iv. --- Critical remarks ---
 - On `vsmo:acts-on`:<br>
   - The name "acts-on" may be too specific, compared to just "has-patient"
     or "has-object".
@@ -212,12 +216,13 @@ VSMO defines the following Classes, as Instances of `rdfs:Class`:
       conversations, when things might be confused with RDF or OWL.
 
 
+<br>
 
 ## Specification of the conversion to RDF
 
-### VSM-terms
+### 1. VSM-terms
 
-#### Pre-processing of null-IDs
+#### 1.1. Pre-processing of null-IDs
 
 Note that:
 - VSM-terms of the type VSM-Class, -Instance, or -RefInstance
@@ -244,8 +249,7 @@ Each of these IDs should be either a URI or `null` in the input VSM-JSON.
   RefInstance term, and then handles it as above.
 
 
-
-#### Generation of RDF
+#### 1.2. Generation of RDF
 
 For each VSM-Instance or -RefInstance term, a line like this is added
 to the output RDF:
@@ -258,7 +262,7 @@ A VSM-Literal term is represented by the following fragment, wherever it occurs:
 `"{literal-text}"^^xsd:string`.
 
 
-### VSM-connectors
+### 2. VSM-connectors
 
 Here we show the RDF-representation of VSM-connectors. Note:
 <br>&bull; the examples use `{Role-instID}` to represent a connected VSM-term,
@@ -269,7 +273,7 @@ by `{Role-classID}`;
 by `"{literal-text}"^^xsd:string`.
 
 
-#### Trident
+#### 2.1. Trident
 
 A trident connects three VSM-terms and assigns to each either the Subject,
 Relation, or Object role, relative to the other two.<br>
@@ -277,7 +281,7 @@ For each trident, a line like this is added:
 
 `{Relation-instID} vsmo:has-agent {Subject-instID} ; vsmo:acts-on {Object-instID} .`
 
-#### Object-omitting Bident
+#### 2.2. Object-omitting Bident
 
 Bidents are just subtypes of the trident, with the same semantics.
 <br>The object-omitting bident is used to model phrases with a verb that has
@@ -285,7 +289,7 @@ no object, like "device explodes". For these bidents, a line like this is added:
 
 `{Relation-instID} vsmo:has-agent {Subject-instID} .`
 
-#### Subject-omitting Bident
+#### 2.3. Subject-omitting Bident
 
 The subject-omitting bident models phrases where the subject is irrelevant or
 not given, as in "destruction(-of) X", or "to-write book".
@@ -293,7 +297,7 @@ For these bidents, a line like this is added:
 
 `{Relation-instID} vsmo:acts-on {Object-instID} .`
 
-#### Relation-omitting Bident
+#### 2.4. Relation-omitting Bident
 
 The relation-omitting bident models an association between a Subject and
 an Object term, whereby an implicit relation "HasQuality" is implied.<br>
@@ -307,7 +311,7 @@ has no identifier in the VSM-JSON), and a line like this is added:
 [a vsmo:HasQuality] vsmo:has-agent {Subject-instID} ; vsmo:acts-on {Object-instID} .
 ```
 
-#### List-connector
+#### 2.5. List-connector
 
 This connects a list-relation and N (>0) list-elements.
 For a list-connector, a series of lines like this is added:
@@ -319,7 +323,7 @@ For a list-connector, a series of lines like this is added:
 {ListElement-(N-1)-instID} vsmo:has-next-element {ListElement-N-instID} .
 ```
 
-#### Coreference connector
+#### 2.6. Coreference connector
 
 This connects a child term to a parent term, with semantics as described earlier.
 For a coreference, a line like this is added:
@@ -329,6 +333,7 @@ For a coreference, a line like this is added:
 ```
 
 
+<br>
 
 ## Example conversions
 
@@ -339,7 +344,7 @@ for classes and example database identifiers for instances.<br>
 in a vsm-box).
 
 
-### Simple example
+### E1. Simple example
 
 The following piece of information is represented with just two tridents:
 
@@ -383,7 +388,7 @@ http://db.ex/03 vsmo:has-agent http://db.ex/01 ; vsmo:acts-on http://db.ex/04 .
 
 
 
-### Example with the four VSM-term types, and some `null` IDs
+### E2. Example with the four VSM-term types, and some `null` IDs
 
 > John saying that ducks (in general) are called 'canard' (as a label), implies that he (=John) knows French.
 
@@ -438,7 +443,7 @@ http://db.ex/06 vsmo:has-parent http://db.ex/00 .
 
 
 
-## Example with all connectors
+## E3. Example with all connectors
 
 The following example contains several tridents, two types of bident,
 a list connector, and a coreference connector:
