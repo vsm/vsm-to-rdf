@@ -1,0 +1,32 @@
+{
+  "name": "vsm-to-rdf",
+  "version": "1.0.0",
+  "description": "Converts VSM-JSON to RDF",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint src",
+    "test": "mocha \"src/**/*.test.js\" --check-leaks",
+    "testw": "mocha \"src/**/*.test.js\" --check-leaks --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vsmjs/vsm-to-rdf"
+  },
+  "keywords": [
+    "VSM",
+    "RDF",
+    "ontology",
+    "conversion"
+  ],
+  "author": "Steven Vercruysse (http://stcruy.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stcruy/vsmjs/issues"
+  },
+  "homepage": "https://github.com/stcruy/vsmjs#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^6.6.0",
+    "mocha": "^6.2.2"
+  }
+}

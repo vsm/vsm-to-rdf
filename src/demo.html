@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <script src="https://unpkg.com/vsm-box@^1.0.0/dist/vsm-box.standalone.min.js"></script>
+</head>
+
+<body>
+  <vsm-box autofocus=true></vsm-box>
+</body>
+
+<script>
+  var vsmbox = document.getElementsByTagName('vsm-box')[0];
+
+  vsmbox.initialValue = {
+    terms: [
+      { str: 'John',    classID: 'http://ont.ex/John',    instID: 'http://db.ex/00' },
+      { str: 'eats',    classID: 'http://ont.ex/to-eat',  instID: 'http://db.ex/01' },
+      { str: 'chicken', classID: 'http://ont.ex/chicken', instID: 'http://db.ex/02' },
+      { str: 'with',    classID: 'http://ont.ex/to-use',  instID: 'http://db.ex/03' },
+      { str: 'fork',    classID: 'http://ont.ex/fork',    instID: 'http://db.ex/04' }
+    ],
+    conns: [
+      { type: 'T', pos: [ 0, 1, 2 ] },
+      { type: 'T', pos: [ 1, 3, 4 ] }
+    ]
+  };
+
+</script>
+</html>
