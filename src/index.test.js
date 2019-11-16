@@ -1,27 +1,28 @@
-const convert = require('./index.js');
+const vsmToRdf = require('./index.js');
+const patchEnforceCorefs = vsmToRdf.patchEnforceCorefs;  // Temp. patch function.
 
 const chai = require('chai');
 const expect = chai.expect;  // eslint-disable-line no-unused-vars
 chai.should();
 
 const outdentBlock = s => s.replace(/^ +/gm, '').replace(/(^\n|\n$)/g, '');
+const NS = '\n      ';  // For multiline `it()`-descriptions.
 
 
-
-describe('convert()', function() {
+describe('vsmToRdf()', function() {
 
 
   it('converts a simple example, given as a VSM-JSON String', () => {
     var input = {
-        terms: [
-          { str: 'John',    classID: 'http://ont.ex/John',    instID: 'http://db.ex/00' },
-          { str: 'eats',    classID: 'http://ont.ex/to-eat',  instID: 'http://db.ex/01' },
-          { str: 'chicken', classID: 'http://ont.ex/chicken', instID: 'http://db.ex/02' }
-        ],
-        conns: [
-          { type: 'T', pos: [ 0, 1, 2 ] }
-        ]
-      };
+      terms: [
+        { str: 'John',    classID: 'http://ont.ex/John',    instID: 'http://db.ex/00' },
+        { str: 'eats',    classID: 'http://ont.ex/to-eat',  instID: 'http://db.ex/01' },
+        { str: 'chicken', classID: 'http://ont.ex/chicken', instID: 'http://db.ex/02' }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] }
+      ]
+    };
 
     var output = outdentBlock(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -35,25 +36,25 @@ describe('convert()', function() {
     `);
 
     input = JSON.stringify(input);
-    convert(input).should.equal(output);
+    vsmToRdf(input).should.equal(output);
   });
 
 
 
   it('converts a simple example, given as a VSM-JSON JavaScript-Object', () => {
     var input = {
-        terms: [
-          { str: 'John',    classID: 'http://ont.ex/John',    instID: 'http://db.ex/00' },
-          { str: 'eats',    classID: 'http://ont.ex/to-eat',  instID: 'http://db.ex/01' },
-          { str: 'chicken', classID: 'http://ont.ex/chicken', instID: 'http://db.ex/02' },
-          { str: 'with',    classID: 'http://ont.ex/to-use',  instID: 'http://db.ex/03' },
-          { str: 'fork',    classID: 'http://ont.ex/fork',    instID: 'http://db.ex/04' }
-        ],
-        conns: [
-          { type: 'T', pos: [ 0, 1, 2 ] },
-          { type: 'T', pos: [ 1, 3, 4 ] }
-        ]
-      };
+      terms: [
+        { str: 'John',    classID: 'http://ont.ex/John',    instID: 'http://db.ex/00' },
+        { str: 'eats',    classID: 'http://ont.ex/to-eat',  instID: 'http://db.ex/01' },
+        { str: 'chicken', classID: 'http://ont.ex/chicken', instID: 'http://db.ex/02' },
+        { str: 'with',    classID: 'http://ont.ex/to-use',  instID: 'http://db.ex/03' },
+        { str: 'fork',    classID: 'http://ont.ex/fork',    instID: 'http://db.ex/04' }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] },
+        { type: 'T', pos: [ 1, 3, 4 ] }
+      ]
+    };
     var output = outdentBlock(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX vsmo: <http://www.w3id.org/vsmo/>
@@ -67,21 +68,21 @@ describe('convert()', function() {
       http://db.ex/01 vsmo:has-agent http://db.ex/00 ; vsmo:acts-on http://db.ex/02 .
       http://db.ex/03 vsmo:has-agent http://db.ex/01 ; vsmo:acts-on http://db.ex/04 .
     `);
-    convert(input).should.equal(output);
+    vsmToRdf(input).should.equal(output);
   });
 
 
 
   it('returns `null` for some obvious errors', () => {
-    expect(convert('not-a-json-string')).to.equal(null);
-    expect(convert({ terms: [] })).to.equal(null);
-    expect(convert({ conns: [] })).to.equal(null);
+    expect(vsmToRdf('not-a-json-string')).to.equal(null);
+    expect(vsmToRdf({ terms: [] })).to.equal(null);
+    expect(vsmToRdf({ conns: [] })).to.equal(null);
   });
 
 
 
   it('converts an example with the four VSM-term types, ' +
-     'and some `null` IDs', () => {
+     NS + 'and replaces `null` IDs with dummy URIs', () => {
     var input = {
       terms: [
         { str: 'John',      classID: 'http://ont.ex/John',          instID: null },
@@ -108,21 +109,21 @@ describe('convert()', function() {
       PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
       PREFIX vsmo: <http://www.w3id.org/vsmo/>
 
-      http://inst.x/00 a http://ont.ex/John .
-      http://inst.x/01 a http://ont.ex/to-say .
-      http://inst.x/03 a http://ont.ex/to-have-label .
-      http://inst.x/05 a http://ont.ex/to-imply .
-      http://inst.x/06 a http://ont.ex/John .
-      http://inst.x/07 a http://ont.ex/to-know .
-      http://inst.x/08 a http://class.x/08 .
+      http://i.x/00 a http://ont.ex/John .
+      http://i.x/01 a http://ont.ex/to-say .
+      http://i.x/03 a http://ont.ex/to-have-label .
+      http://i.x/05 a http://ont.ex/to-imply .
+      http://i.x/06 a http://ont.ex/John .
+      http://i.x/07 a http://ont.ex/to-know .
+      http://i.x/08 a http://c.x/08 .
 
-      http://inst.x/03 vsmo:has-agent http://ont.ex/duck ; vsmo:acts-on "canard"^^xsd:string .
-      http://inst.x/01 vsmo:has-agent http://inst.x/00 ; vsmo:acts-on http://inst.x/03 .
-      http://inst.x/07 vsmo:has-agent http://inst.x/06 ; vsmo:acts-on http://inst.x/08 .
-      http://inst.x/05 vsmo:has-agent http://inst.x/01 ; vsmo:acts-on http://inst.x/07 .
-      http://inst.x/06 vsmo:has-parent http://inst.x/00 .
+      http://i.x/03 vsmo:has-agent http://ont.ex/duck ; vsmo:acts-on "canard"^^xsd:string .
+      http://i.x/01 vsmo:has-agent http://i.x/00 ; vsmo:acts-on http://i.x/03 .
+      http://i.x/07 vsmo:has-agent http://i.x/06 ; vsmo:acts-on http://i.x/08 .
+      http://i.x/05 vsmo:has-agent http://i.x/01 ; vsmo:acts-on http://i.x/07 .
+      http://i.x/06 vsmo:has-parent http://i.x/00 .
     `);
-    convert(input).should.equal(output);
+    vsmToRdf(input).should.equal(output);
   });
 
 
@@ -184,6 +185,209 @@ describe('convert()', function() {
       http://db.ex/05 vsmo:has-agent http://db.ex/01 ; vsmo:acts-on http://db.ex/09 .
       http://db.ex/06 vsmo:has-parent http://db.ex/02 .
     `);
-    convert(input).should.equal(output);
+    vsmToRdf(input).should.equal(output);
+  });
+
+
+
+  it('replaces a coreference-connected child\'s `null` parentID ' +
+     NS + 'with the parent\'s instID, and copies the parent\'s classID', () => {
+    var input = {
+      terms: [
+        { str: 'John',     classID: null, instID: null },
+        { str: 'talks to', classID: null, instID: null },
+        { str: 'himself',  classID: null, instID: null, parentID: null }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] },
+        { type: 'R', pos: [ 2, 0 ] }
+      ]
+    };
+    var output = outdentBlock(`
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX vsmo: <http://www.w3id.org/vsmo/>
+
+      http://i.x/00 a http://c.x/00 .
+      http://i.x/01 a http://c.x/01 .
+      http://i.x/02 a http://c.x/00 .
+
+      http://i.x/01 vsmo:has-agent http://i.x/00 ; vsmo:acts-on http://i.x/02 .
+      http://i.x/02 vsmo:has-parent http://i.x/00 .
+    `);
+    vsmToRdf(input).should.equal(output);
+  });
+
+
+
+  it('replaces a not-coreferencing-in-this-sentence child\'s `null` parentID/' +
+     NS + 'instID/classID with dummy URIs', () => {
+    var input = {
+      terms: [
+        { str: 'John',     classID: 'http://ont.ex/John',       instID: 'http://db.ex/00' },
+        { str: 'talks to', classID: 'http://ont.ex/to-talk-to', instID: 'http://db.ex/01' },
+        { str: 'her',      classID: null,                       instID: null,              parentID: null }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] }
+      ]
+    };
+    var output = outdentBlock(`
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX vsmo: <http://www.w3id.org/vsmo/>
+
+      http://db.ex/00 a http://ont.ex/John .
+      http://db.ex/01 a http://ont.ex/to-talk-to .
+      http://i.x/02 a http://c.x/02 .
+      http://j.x/02 a http://c.x/02 .
+
+      http://db.ex/01 vsmo:has-agent http://db.ex/00 ; vsmo:acts-on http://i.x/02 .
+      http://i.x/02 vsmo:has-parent http://j.x/02 .
+    `);
+    vsmToRdf(input).should.equal(output);
+  });
+
+
+
+  it('processes a not-coreferencing-in-this-sentence child\'s non-`null`' +
+     NS + 'parentID correctly', () => {
+    var input = {
+      terms: [
+        { str: 'John',     classID: 'http://ont.ex/John',       instID: 'http://db.ex/00' },
+        { str: 'talks to', classID: 'http://ont.ex/to-talk-to', instID: 'http://db.ex/01' },
+        { str: 'her',      classID: 'http://ont.ex/Alice',      instID: 'http://db.ex/02', parentID: 'http://db.ex/777' }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] }
+      ]
+    };
+    var output = outdentBlock(`
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX vsmo: <http://www.w3id.org/vsmo/>
+
+      http://db.ex/00 a http://ont.ex/John .
+      http://db.ex/01 a http://ont.ex/to-talk-to .
+      http://db.ex/02 a http://ont.ex/Alice .
+      http://db.ex/777 a http://ont.ex/Alice .
+
+      http://db.ex/01 vsmo:has-agent http://db.ex/00 ; vsmo:acts-on http://db.ex/02 .
+      http://db.ex/02 vsmo:has-parent http://db.ex/777 .
+    `);
+    vsmToRdf(input).should.equal(output);
+  });
+});
+
+
+
+describe('patchEnforceCorefs() [temporary patch for vsm-box@1.0.0]', function() {
+
+  it('enforces that for coreference connectors, the child is a RefInstance and ' +
+     NS + 'parent a (Ref/)Instance, by adding dummy IDs if needed ', () => {
+    var vsm1 = {
+      terms: [
+        { str: 'John'                                  },
+        { str: 'talks to', classID: null, instID: null },
+        { str: 'himself'                               }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] },
+        { type: 'R', pos: [ 2, 0 ] }
+      ]
+    };
+    var vsm2 = {
+      terms: [
+        { str: 'John',     classID: null, instID: null },
+        { str: 'talks to', classID: null, instID: null },
+        { str: 'himself',  classID: null, instID: null, parentID: null }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] },
+        { type: 'R', pos: [ 2, 0 ] }
+      ]
+    };
+    patchEnforceCorefs(vsm1).should.deep.equal(vsm2);
+  });
+
+
+
+  it('enforces that for coreference connectors, the child term parent/classIDs ' +
+     NS + 'correctly refers to the parent term', () => {
+    var vsm1a = {
+      terms: [
+        { str: 'John',     classID: 'http://ont.ex/John',       instID: 'http://db.ex/00' },
+        { str: 'talks to', classID: 'http://ont.ex/to-talk-to', instID: 'http://db.ex/01' },
+        { str: 'himself',  classID: 'http://ont.ex/aaaaaa',     instID: 'http://db.ex/02', parentID: 'http://db.ex/9999' }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] },
+        { type: 'R', pos: [ 2, 0 ] }
+      ]
+    };
+    var vsm1b = {
+      terms: [
+        { str: 'John',     classID: 'http://ont.ex/John',       instID: 'http://db.ex/00' },
+        { str: 'talks to', classID: 'http://ont.ex/to-talk-to', instID: 'http://db.ex/01' },
+        { str: 'himself',  classID: null,                       instID: 'http://db.ex/02', parentID: 'http://db.ex/9999' }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] },
+        { type: 'R', pos: [ 2, 0 ] }
+      ]
+    };
+    var vsm2 = {
+      terms: [
+        { str: 'John',     classID: 'http://ont.ex/John',       instID: 'http://db.ex/00' },
+        { str: 'talks to', classID: 'http://ont.ex/to-talk-to', instID: 'http://db.ex/01' },
+        { str: 'himself',  classID: 'http://ont.ex/John',       instID: 'http://db.ex/02', parentID: 'http://db.ex/00' }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] },
+        { type: 'R', pos: [ 2, 0 ] }
+      ]
+    };
+    patchEnforceCorefs(vsm1a).should.deep.equal(vsm2);
+    patchEnforceCorefs(vsm1b).should.deep.equal(vsm2);
+  });
+
+
+
+  it('propagates IDs, respecting parent->child=parent->child dependency chains',
+     () => {
+    var vsm1 = {
+      terms: [
+        { str: 'John',      classID: 'http://ont.ex/John', instID: 'http://db.ex/00' },
+        { str: 'talks to',  classID: null,                 instID: null              },
+        { str: 'himself',   classID: null,                 instID: null              },
+        { str: 'cheers up', classID: null,                 instID: null              },
+        { str: 'him',       classID: null,                 instID: null              }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] },
+        { type: 'R', pos: [ 2, 0 ] },
+        { type: 'T', pos: [ 1, 3, 4 ] },
+        { type: 'R', pos: [ 4, 2 ] }
+      ]
+    };
+    var vsm2 = {
+      terms: [
+        { str: 'John',      classID: 'http://ont.ex/John', instID: 'http://db.ex/00' },
+        { str: 'talks to',  classID: null,                 instID: null              },
+        { str: 'himself',   classID: 'http://ont.ex/John', instID: null              , parentID: 'http://db.ex/00' },
+        { str: 'cheers up', classID: null,                 instID: null              },
+        { str: 'him',       classID: 'http://ont.ex/John', instID: null              , parentID: null }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] },
+        { type: 'R', pos: [ 2, 0 ] },
+        { type: 'T', pos: [ 1, 3, 4 ] },
+        { type: 'R', pos: [ 4, 2 ] }
+      ]
+    };
+    patchEnforceCorefs(vsm1).should.deep.equal(vsm2);
+
+    // Switch order of the two coreferences in the array, and test that
+    // filling-in still happens in the right order.
+    var x = vsm1.conns[1];  vsm1.conns[1] = vsm1.conns[3];  vsm1.conns[3] = x;
+    x     = vsm2.conns[1];  vsm2.conns[1] = vsm2.conns[3];  vsm2.conns[3] = x;
+    patchEnforceCorefs(vsm1).should.deep.equal(vsm2);
   });
 });

@@ -243,25 +243,34 @@ Each of these IDs should be either a URI or `null` in the input VSM-JSON.
   (which would represent a referred-to `instID` in some other VSM-sentence).
 - For any `parentID` that is `null`, for a term that _is_ connected by a
   coreference as child term to a parent term (i.e. in the same VSM-sentence):
-  this module makes this child term's `parentID` equal to the parent term's
-  `instID` (which, if `null`, would be that parent's newly generated dummy URI).
-- If a non-RefInstance term would erroneously not have a `parentID` but still be
-  connected with a coreference as a child term to a parent term:
-  this module first gives it all the extra IDs (`==null`) required to be a
-  RefInstance term, and then handles it as above.
+  this module makes the child's `parentID` equal to its parent's `instID`,
+  and the child's `classID` equal to its parent's (after any parent `null` IDs
+  are replaced by dummy URIs).
 
 
-#### 1.2. Generation of RDF
+#### 1.2. Generation of RDF for VSM-terms
 
 For each VSM-Instance or -RefInstance term, a line like this is added
 to the output RDF:
 
-`{instID} a {classID} .`
+```
+{instID} a {classID} .
+```
 
 For VSM-Class or -Literal terms, no such line is added.
 
-A VSM-Literal term is represented by the following fragment, wherever it occurs:
-`"{literal-text}"^^xsd:string`.
+A VSM-Literal term is represented by the following fragment, wherever it
+occurs: `"{literal-text}"^^xsd:string`.
+
+For each VSM-RefInstance term that is not connected by a coreference as the
+child term, (and thus refers to an VSM-Instance term in another VSM-sentence),
+the external reference is made explicit, by adding two lines like this:
+
+```
+{parentID} a {classID} .
+{instID} vsmo:has-parent {parentID} .
+```
+
 
 
 ### 2. VSM-connectors
