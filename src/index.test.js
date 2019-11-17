@@ -77,6 +77,11 @@ describe('vsmToRdf()', function() {
     expect(vsmToRdf('not-a-json-string')).to.equal(null);
     expect(vsmToRdf({ terms: [] })).to.equal(null);
     expect(vsmToRdf({ conns: [] })).to.equal(null);
+
+    expect(vsmToRdf({
+      terms: [],
+      conns: [ { type: 'T', pos: [ 0, 1, 2 ] } ]
+    })).to.equal(null);
   });
 
 

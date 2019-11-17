@@ -14,7 +14,8 @@ const Next   = 'vsmo:has-next-element';
 const Parent = 'vsmo:has-parent';
 //const Rel    = 'vsmo:ActiveRelation';
 
-const N = '\n';
+const StringTypeExt = "^^xsd:string";
+const NL = '\n';
 
 const dummyID  = (pos, c) => `http://${c}.x/` + pos.toString().padStart(2, '0');
 const dummyCID = pos => dummyID(pos, 'c');
@@ -42,9 +43,6 @@ function convert(strOrObj) {
 
   // If the argument is a JSON String, convert it to a JavaScript-Object.
   var vsm = typeof strOrObj == 'string' ? JSON.parse(strOrObj) : strOrObj;
-
-  // Check for some obvious errors.
-  if (!vsm.terms || !vsm.conns)  return null;
 
   // Apply a patch for vsm-box@1.0.0 (see the function's description).
   vsm = patchEnforceCorefs(vsm);
@@ -117,7 +115,7 @@ function convert(strOrObj) {
     // - -1 if no term is there.
     var q = c.pos.map(p => p == -1 ? -1 : terms[p]);
     q = q.map(t =>
-      t == -1 ?  -1 :  (t.instID || t.classID || `"${t.str}"^^xsd:string`)
+      t == -1 ?  -1 :  (t.instID || t.classID || `"${t.str}"${StringTypeExt}`)
     );
 
     // Add custom RDF for each VSM-connector.
@@ -148,7 +146,7 @@ function convert(strOrObj) {
   extRefTerms.forEach(t => rdf.push(`${t.instID} ${Parent} ${t.parentID} .`));
 
 
-  return rdf.join(N);
+  return rdf.join(NL);
 }
 
 

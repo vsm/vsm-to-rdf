@@ -5,19 +5,25 @@
 
 ## Overview
 
-Converts VSM-JSON (=output emitted by a
-[vsm-box](https://github.com/vsmjs/vsm-box) web-component) to
+This module provides a single function that converts VSM-JSON to
 [RDF](https://www.w3.org/RDF/) [Turtle](https://www.w3.org/TR/turtle/) format.
-<br>
-It can process a JSON String, but also a not-stringified JavaScript Object.
+<br>VSM-JSON is the output emitted by a
+[vsm-box](https://github.com/vsmjs/vsm-box) web-component, and can be given
+either as a JSON String or as a not-stringified JS Object.
 
-Note that this module does not check for syntactic errors in the
-VSM-JSON, so any validity checks are the responsibilty of external code.
-<br>Still, the VSM-JSON is allowed to contain `null`s for class/inst/parentIDs
-(as new terms created in a vsm-box always get `null` instIDs, to be filled in
-only after getting a real one, e.g. after saving to a DB).
-These will be replaced by dummy
-[URI](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) IDs
+This module does not check for all possible syntactic errors in the given
+VSM structure, so any validity checks are the responsibilty of external code.
+
+For an invalid JSON String or some fatal error in the VSM structure,
+it returns `null`.
+
+The given VSM data may contain class/inst/parentIDs that are `null`.
+Because, when VSM-terms are being created in a vsm-box, they get `null` as an
+instID by default (to be filled in e.g. after saving to a database).
+So support for `null`s enables the live inspection of how a VSM-sentence
+that is being constructed, is translated to a corresponding RDF-structure.
+<br>Any `null` IDs will be replaced by dummy
+[URI](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier)s
 in the RDF output.
 
 
