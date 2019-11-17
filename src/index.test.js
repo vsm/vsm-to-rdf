@@ -355,8 +355,8 @@ describe('patchEnforceCorefs() [temporary patch for vsm-box@1.0.0]', function() 
 
 
 
-  it('propagates IDs, respecting parent->child=parent->child dependency chains',
-     () => {
+  it('propagates IDs, respecting parent->child=parent->child dependency ' +
+     'chains', () => {
     var vsm1 = {
       terms: [
         { str: 'John',      classID: 'http://ont.ex/John', instID: 'http://db.ex/00' },

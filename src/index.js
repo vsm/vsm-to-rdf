@@ -14,7 +14,7 @@ const Next   = 'vsmo:has-next-element';
 const Parent = 'vsmo:has-parent';
 //const Rel    = 'vsmo:ActiveRelation';
 
-const StringTypeExt = "^^xsd:string";
+const StringTypeExt = '^^xsd:string';
 const NL = '\n';
 
 const dummyID  = (pos, c) => `http://${c}.x/` + pos.toString().padStart(2, '0');
