@@ -40,8 +40,9 @@
 
   <!-- Include two libraries for showing JS-objects in a readable way. -->
   <script> // Minified, browser-compatible version of json-stringify-pretty-compact@1.2.0:
+    var MaxCols = 120;
     function stringify(n,r){r=r||{};var h=JSON.stringify([1],null,_gt(r,'indent',2)).slice(2,-3),s=_gt(r,'margins',!1),v
-    =''===h?1/0:_gt(r,'maxLength',80);return function f(u,n,r){u&&'function'==typeof u.toJSON&&(u=u.toJSON());var t=JSON
+    =''===h?1/0:_gt(r,'maxLength',MaxCols);return function f(u,n,r){u&&'function'==typeof u.toJSON&&(u=u.toJSON());var t=JSON
     .stringify(u);if(void 0===t)return t;var i=v-n.length-r;if(t.length<=i){var e=prettify(t,s);if(e.length<=i)return e}
     if('object'==typeof u&&null!==u){var g,o=n+h,a=[],l=function(n,r){return r===n.length-1?0:1};if(Array.isArray(u)){
     for(var c=0;c<u.length;c++)a.push(f(u[c],o,l(u,c))||'null');g='[]'}else Object.keys(u).forEach(function(n,r,t){var i
@@ -86,9 +87,9 @@
     <vsm-box id="vsmBox"></vsm-box>
 
     <div id="msg"></div>
-    <textarea id="stateText" rows="21" cols="80" spellcheck="false"></textarea>
+    <textarea id="stateText" rows="18" spellcheck="false"></textarea>
     <div id="msg2">--&gt; vsm-to-rdf</div>
-    <textarea id=  "rdfText" rows="31" cols="100" readonly         ></textarea>
+    <textarea id=  "rdfText" rows="32" readonly         ></textarea>
   </div>
 
 
@@ -125,7 +126,10 @@
 
 
 
-  // --- Initialize the 'stateText' textarea, which contains the JSON ---
+  // --- Initialize the 'stateText' (JSON) and 'rdfText' textareas ---
+
+  elTxt.cols  = MaxCols;
+  elTxt2.cols = MaxCols;
 
   boxValueToStateText(initialValue);             // Initial VsmBox ==> textarea.
   elTxt.addEventListener('input', stateTextToBoxValue); // If textarea changes..
@@ -133,6 +137,7 @@
   elTxt.addEventListener('keydown', ev => {  // Disable Tab, a common edit-key..
     if (ev.key == 'Tab')  ev.preventDefault();  // which 'd go to Clear button.
   });
+
 
 
   // --- Initialize the 'msg' elements (above the textareas) ---
