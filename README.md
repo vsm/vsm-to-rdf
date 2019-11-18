@@ -415,7 +415,8 @@ http://db.ex/03 vsmo:has-agent http://db.ex/01 ; vsmo:acts-on http://db.ex/04 .
 
 &bull; As VSM-JSON:
 ```
-{ terms: [
+{
+  terms: [
     { str: 'John',      classID: 'http://ont.ex/John',          instID: null },
     { str: 'saying',    classID: 'http://ont.ex/to-say',        instID: null },
     { str: 'duck',      classID: 'http://ont.ex/duck'                        },  // Class
