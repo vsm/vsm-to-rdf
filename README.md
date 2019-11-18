@@ -26,6 +26,9 @@ that is being constructed, is translated to a corresponding RDF-structure.
 [URI](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier)s
 in the RDF output.
 
+For the same reason, the VSM data may contain Edit-type VSM-terms.
+These are converted to non-Edit ones and are given dummy IDs too.
+
 
 <br>
 

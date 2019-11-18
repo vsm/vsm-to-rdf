@@ -73,7 +73,14 @@ describe('vsmToRdf()', function() {
 
 
 
+  it('returns an empty string for an empty VSM structure', () => {
+    vsmToRdf({ terms: [], conns: [] }).should.equal('');
+  });
+
+
+
   it('returns `null` for some obvious errors', () => {
+    expect(vsmToRdf(null)).to.equal(null);
     expect(vsmToRdf('not-a-json-string')).to.equal(null);
     expect(vsmToRdf({ terms: [] })).to.equal(null);
     expect(vsmToRdf({ conns: [] })).to.equal(null);
@@ -120,13 +127,43 @@ describe('vsmToRdf()', function() {
       http://i.x/05 a http://ont.ex/to-imply .
       http://i.x/06 a http://ont.ex/John .
       http://i.x/07 a http://ont.ex/to-know .
-      http://i.x/08 a http://c.x/08 .
+      http://i.x/08 a http://c.x/08-French .
 
       http://i.x/03 vsmo:has-agent http://ont.ex/duck ; vsmo:acts-on "canard"^^xsd:string .
       http://i.x/01 vsmo:has-agent http://i.x/00 ; vsmo:acts-on http://i.x/03 .
       http://i.x/07 vsmo:has-agent http://i.x/06 ; vsmo:acts-on http://i.x/08 .
       http://i.x/05 vsmo:has-agent http://i.x/01 ; vsmo:acts-on http://i.x/07 .
       http://i.x/06 vsmo:has-parent http://i.x/00 .
+    `);
+    vsmToRdf(input).should.equal(output);
+  });
+
+
+
+  it('converts examples with an Edit-type VSM-term, giving them dummy URIs', () => {
+    var input = {
+      terms: [
+        { type: 'ER' },
+        { },
+        { type: 'EC' },
+        { type: 'EL' }
+      ],
+      conns: [
+        { type: 'T', pos: [ 2, 1, 3 ] }
+      ]
+    };
+
+    var output = outdentBlock(`
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+      PREFIX vsmo: <http://www.w3id.org/vsmo/>
+
+      http://i.x/00 a http://c.x/00-(empty) .
+      http://i.x/01 a http://c.x/01-(empty) .
+      http://j.x/00 a http://c.x/00-(empty) .
+
+      http://i.x/01 vsmo:has-agent http://c.x/02-(empty) ; vsmo:acts-on "(empty)"^^xsd:string .
+      http://i.x/00 vsmo:has-parent http://j.x/00 .
     `);
     vsmToRdf(input).should.equal(output);
   });
@@ -212,9 +249,9 @@ describe('vsmToRdf()', function() {
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX vsmo: <http://www.w3id.org/vsmo/>
 
-      http://i.x/00 a http://c.x/00 .
-      http://i.x/01 a http://c.x/01 .
-      http://i.x/02 a http://c.x/00 .
+      http://i.x/00 a http://c.x/00-John .
+      http://i.x/01 a http://c.x/01-talks-to .
+      http://i.x/02 a http://c.x/00-John .
 
       http://i.x/01 vsmo:has-agent http://i.x/00 ; vsmo:acts-on http://i.x/02 .
       http://i.x/02 vsmo:has-parent http://i.x/00 .
@@ -242,8 +279,8 @@ describe('vsmToRdf()', function() {
 
       http://db.ex/00 a http://ont.ex/John .
       http://db.ex/01 a http://ont.ex/to-talk-to .
-      http://i.x/02 a http://c.x/02 .
-      http://j.x/02 a http://c.x/02 .
+      http://i.x/02 a http://c.x/02-her .
+      http://j.x/02 a http://c.x/02-her .
 
       http://db.ex/01 vsmo:has-agent http://db.ex/00 ; vsmo:acts-on http://i.x/02 .
       http://i.x/02 vsmo:has-parent http://j.x/02 .

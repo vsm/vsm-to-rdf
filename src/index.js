@@ -15,12 +15,13 @@ const Parent = 'vsmo:has-parent';
 //const Rel    = 'vsmo:ActiveRelation';
 
 const StringTypeExt = '^^xsd:string';
+const EditTermStr = '(empty)';
 const NL = '\n';
 
 const dummyID  = (pos, c) => `http://${c}.x/` + pos.toString().padStart(2, '0');
-const dummyCID = pos => dummyID(pos, 'c');
-const dummyIID = pos => dummyID(pos, 'i');
-const dummyPID = pos => dummyID(pos, 'j');  // (Is also meant to be some instID).
+const dummyInstID         = pos => dummyID(pos, 'i');
+const dummyInstParentID   = pos => dummyID(pos, 'j');
+const dummyClassID = (pos, str) => dummyID(pos, 'c') + '-' + str.replace(/ /g, '-');
 
 
 
@@ -44,6 +45,9 @@ function convert(strOrObj) {
   // If the argument is a JSON String, convert it to a JavaScript-Object.
   var vsm = typeof strOrObj == 'string' ? JSON.parse(strOrObj) : strOrObj;
 
+  // If there is no actual content, return ''.
+  if (!vsm.terms.length && !vsm.conns.length)  return '';
+
   // Apply a patch for vsm-box@1.0.0 (see the function's description).
   vsm = patchEnforceCorefs(vsm);
 
@@ -53,12 +57,19 @@ function convert(strOrObj) {
   // Make an array of copied terms (don't change the originals), in which `null`
   // class/instIDs are replaced with dummy IDs.  Leave the parentIDs unchanged.
   var terms = vsm.terms.map((t, pos) => {
-    return ({
-      str: t.str,
-      ...(t.classID  === undefined ? 0 : { classID:  t.classID || dummyCID(pos) }),
-      ...(t.instID   === undefined ? 0 : { instID:   t.instID  || dummyIID(pos) }),
-      ...(t.parentID === undefined ? 0 : { parentID: t.parentID })
-    });
+    return t.str ?
+      {
+        str: t.str,
+        ...(t.classID  === undefined ? 0 : { classID:  t.classID || dummyClassID(pos, t.str) }),
+        ...(t.instID   === undefined ? 0 : { instID:   t.instID  || dummyInstID (pos) }),
+        ...(t.parentID === undefined ? 0 : { parentID: t.parentID })
+      } :
+      {
+        str: EditTermStr,
+        ...(t.type == 'EL'                   ? 0 : { classID:  dummyClassID     (pos, EditTermStr) }),
+        ...(t.type == 'EL' || t.type == 'EC' ? 0 : { instID:   dummyInstID      (pos) }),
+        ...(t.type != 'ER'                   ? 0 : { parentID: dummyInstParentID(pos) })
+      };
   });
 
   // For each coreference connector's child term having a `null` parentID:
@@ -75,7 +86,7 @@ function convert(strOrObj) {
 
   // Replace any remaining `null` parentIDs with a dummy ID.
   terms.forEach((t, pos) => {
-    if (t.parentID === null)  t.parentID = dummyPID(pos);
+    if (t.parentID === null)  t.parentID = dummyInstParentID(pos);
   });
 
   // Make a list of VSM-RefInstance terms, that refer to a parent term that is
