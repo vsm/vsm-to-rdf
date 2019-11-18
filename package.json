@@ -6,7 +6,9 @@
   "scripts": {
     "lint": "eslint src",
     "test": "mocha \"src/**/*.test.js\" --check-leaks",
-    "testw": "mocha \"src/**/*.test.js\" --check-leaks --watch"
+    "testw": "mocha \"src/**/*.test.js\" --check-leaks --watch",
+    "start": "npm run demo",
+    "build": "webpack --config webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -21,12 +23,19 @@
   "author": "Steven Vercruysse (http://stcruy.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/stcruy/vsmjs/issues"
+    "url": "https://github.com/vsmjs/vsm-to-rdf/issues"
   },
-  "homepage": "https://github.com/stcruy/vsmjs#readme",
+  "homepage": "https://github.com/vsmjs/vsm-to-rdf#readme",
   "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "babel-loader": "^8.0.6",
     "chai": "^4.2.0",
+    "clean-webpack-plugin": "^3.0.0",
     "eslint": "^6.6.0",
-    "mocha": "^6.2.2"
+    "mocha": "^6.2.2",
+    "terser-webpack-plugin": "^2.2.1",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   }
 }
