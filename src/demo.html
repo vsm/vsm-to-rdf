@@ -1,30 +1,302 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <!--
+    This demo is based on vsm-box's "index-prod-standalone.html".
+    Please refer there for explanations of some intricacies
+    with setting attributes on standalone webcomponents.
+  -->
+
   <meta charset="utf-8"/>
+
+  <title>vsm-to-rdf demo</title>
+
+  <style>
+    body { font-family: tahoma, verdana, arial, sans-serif;  margin: 0; }
+    #main { padding: 2px 0 18px 50px;  background-color: #fff;  min-height: 180px; }
+    #headBox { background-color: #fafafa;
+      padding: 0 6px;  margin: 0;  width: 546px; }
+    #intro { font-size: 12px;  color: #a4a4a4;  line-height: 17px;
+      margin: 4px 0 0 0; }
+    #intro .emph { color: #979797; }
+    #intro .note { color: #bbb; }
+    #buttonsAndInfo { margin: 6px 0 12px 0;  padding: 0 0 3px 0;}
+    #info { padding-left: 20px; }
+    #info, #info a, #info a:visited { font-size: 10px;  color: #c3c3c3; }
+    #info a:hover { color: #88f; }
+    #msg, #msg2 { color: #aaa;  font-size: 11px; height: 12px;  margin: 0 0 2px 0; text-align: right; }
+    #msg { margin-top: 5px; }
+    #stateText, #rdfText {
+      outline: none;  font-size: 11px;  white-space: pre;  box-sizing: border-box;
+      display: block;  border: 0.5px solid #b8b8b8; }
+    #rdfText { background-color: #fdfdfd; }
+  </style>
+
+  <!-- Include the 'standalone build' version of vsm-box. -->
   <script src="https://unpkg.com/vsm-box@^1.0.0/dist/vsm-box.standalone.min.js"></script>
+
+  <!-- Include the webpack-built version of 'vsm-to-rdf'. -->
+  <script src="../dist/vsm-to-rdf.min.js"></script>
+
+  <!-- Include two libraries for showing JS-objects in a readable way. -->
+  <script> // Minified, browser-compatible version of json-stringify-pretty-compact@1.2.0:
+    function stringify(n,r){r=r||{};var h=JSON.stringify([1],null,_gt(r,'indent',2)).slice(2,-3),s=_gt(r,'margins',!1),v
+    =''===h?1/0:_gt(r,'maxLength',80);return function f(u,n,r){u&&'function'==typeof u.toJSON&&(u=u.toJSON());var t=JSON
+    .stringify(u);if(void 0===t)return t;var i=v-n.length-r;if(t.length<=i){var e=prettify(t,s);if(e.length<=i)return e}
+    if('object'==typeof u&&null!==u){var g,o=n+h,a=[],l=function(n,r){return r===n.length-1?0:1};if(Array.isArray(u)){
+    for(var c=0;c<u.length;c++)a.push(f(u[c],o,l(u,c))||'null');g='[]'}else Object.keys(u).forEach(function(n,r,t){var i
+    =JSON.stringify(n)+': ',e=f(u[n],o,i.length+l(t,r));void 0!==e&&a.push(i+e)}),g='{}';if(0<a.length)return[g[0],h+a.
+    join(',\n'+o),g[1]].join('\n'+n)}return t}(n,'',0);function prettify(n,r){var soc=/("(?:[^\\"]|\\.)*")|[:,\][}{]/g,t
+    =r?' ':'',i={'{':'{'+t,'[':'['+t,'}':t+'}',']':t+']',',':', ',':':': '};return n.replace(soc,function(n,r){return r?
+    n:i[n]})}function _gt(n,r,t){return r in n?n[r]:t}}</script>
+  <script src="https://unpkg.com/json5@^2.1.0/dist/index.min.js"></script>
 </head>
 
 <body>
-  <vsm-box autofocus=true></vsm-box>
+
+  <div id="main">
+    <div id="headBox">
+      <p id="intro">
+        This shows 1) a <span class="emph">vsm-box</span>,
+        2) the <span class="emph">JSON</span> linked to it,
+        and 3) their conversion to <span class="emph">RDF</span>.
+        <br>You can <span class="emph">edit the vsm-box or the JSON</span>,
+        and the RDF will update.
+        <br>
+        <span class="note">
+        No vsm-dictionary is declared in this demo,
+        so newly created terms will get classID=null.</span>
+      </p>
+
+      <p id="buttonsAndInfo">
+        <button id="buttonClear">Clear</button>
+        <button id="buttonExample1">Example 1</button>
+        <button id="buttonExample2">Example 2</button>
+        <button id="buttonExample3">Example 3</button>
+        <span id="info">
+          Info:
+          <a href="https://vsmjs.github.io/">vsmjs.github.io</a>,&nbsp;
+          <a href="https://github.com/vsmjs/vsm-box">vsm-box</a>,&nbsp;
+          <a href="http://scicura.org/vsm/vsm.html">VSM</a>,&nbsp;
+          <a href="http://scicura.org/vsm/examples.html">examples</a>.
+        </span>
+      </p>
+    </div>
+
+    <vsm-box id="vsmBox"></vsm-box>
+
+    <div id="msg"></div>
+    <textarea id="stateText" rows="23" cols="80" spellcheck="false"></textarea>
+    <div id="msg2">--&gt; vsm-to-rdf</div>
+    <textarea id=  "rdfText" rows="4" cols="80" readonly          ></textarea>
+  </div>
+
+
+  <!-- Here one can override vsm-box & vsm-autocomplete's default CSS-styles -->
+  <style>
+  </style>
+
+
+  <script>
+  var elBox  = document.getElementById('vsmBox');
+  var elMsg  = document.getElementById('msg');
+  var elMsg2 = document.getElementById('msg2');
+  var elTxt  = document.getElementById('stateText');
+  var elTxt2 = document.getElementById('rdfText');
+
+  var lastAutoFilledText = '';
+
+
+  // --- Initialize the vsm-box. ---
+
+  elBox.queryOptions = {};
+  elBox.placeholder  = 'Type a term or doubleclick for menu';
+  elBox.cycleOnTab   = 'true';  // Standalone webcomp attrs accept only Str/Obj.
+  elBox.allowClassNull = 'true';
+  elBox.sizes = { minWidth: 240 };
+  elBox.addEventListener('change', onChange);
+  //elBox.autofocus = 'true';
+  //elbox.customTerm = ...;  // (See vsm-box's "index-prod-standalone.html").
+  //elBox.vsmDictionary = ...;
+
+  var initialValue = { terms: [], conns: [] };
+  elBox.initialValue = initialValue;
+
+
+
+  // --- Initialize the 'stateText' textarea, which contains the JSON ---
+
+  boxValueToStateText(initialValue);             // Initial VsmBox ==> textarea.
+  elTxt.addEventListener('input', stateTextToBoxValue); // If textarea changes..
+                                                        // .. ==> change VsmBox.
+  elTxt.addEventListener('keydown', ev => {  // Disable Tab, a common edit-key..
+    if (ev.key == 'Tab')  ev.preventDefault();  // which 'd go to Clear button.
+  });
+
+
+  // --- Initialize the 'msg' elements (above the textareas) ---
+
+  elMsg.style.width = elMsg2.style.width = getComputedStyle(elTxt).width;
+  setMsg('');
+
+
+
+  // --- Two-way binding:  vsm-box  <-->  stateText with nicely formatted JSON ---
+  //     (See vsm-box's "index-prod-standalone.html" for extra info).
+
+  function onChange(event) {
+    vsm = event.detail[0];
+    boxValueToStateText(vsm);
+    updateRdf(vsm);
+  }
+
+
+  function boxValueToStateText(value) {
+    elTxt.value = lastAutoFilledText = stringify(value, { margins: true })
+      .replace(/ "([a-zA-Z]*)": /g, ' $1: ')
+      .replace(/{\n {2}terms:/, '{ terms:')
+      .replace(/, conns:/, ',\n  conns:')
+      .replace(/'/g, '\\\'') .replace(/"/g, '\'')
+      .replace(/\n {4}{\n {6}/g, '\n    { ')
+      .replace(/\n {6,10}([\]}],?\n)/g, ' $1')
+      .replace(/] }$/, ']\n}')
+      .replace(/] ?]\n}$/, ']\n  ]\n}')
+      .replace(/(: \[|\],) ?\[/g, '$1\n    [');
+    setMsg(1);
+  }
+
+
+  function stateTextToBoxValue() {
+    var abort = lastAutoFilledText === elTxt.value;
+    lastAutoFilledText = false;
+    if (abort)  return;
+
+    try {
+      var vsm = JSON5.parse(elTxt.value);
+      elBox.initialValue = vsm;
+      setMsg(-1);
+      updateRdf(vsm);
+    }
+    catch (err) {
+      setMsg(err.toString().replace('JSON5: ', ''));
+      updateRdf(null);
+    }
+  }
+
+
+  function setMsg(msg) {
+    var d = new Date();
+    d = '[' + ('0' + d.getHours()).slice(-2) + ':' +
+      ('0' + d.getMinutes()).slice(-2) + ':' +
+      ('0' + d.getSeconds()).slice(-2) + '.' +
+      ('00' + d.getMilliseconds()).slice(-3, -1) + ']';
+    elMsg.innerHTML = !msg ? '' :
+      ((msg == -1 ? '<---' : msg == 1 ? '--->' : msg) + ' &nbsp;' + d);
+  }
+
+
+  function updateRdf(vsm) {
+    try {
+      var rdf = vsm && VsmToRdf(vsm);
+      elTxt2.innerHTML = rdf === null ?  '-' : rdf;
+    }
+    catch(e) {
+      elTxt2.innerHTML =
+        'Can not load \'dist/vsm-to-rdf.min.js\'.\nRun \'npm run build\' to create it.';
+    }
+
+    // Auto-grow rdfText's height.
+    elTxt2.style.width  = (25 + elTxt2.scrollWidth ) + 'px';
+    elTxt2.style.height = (25 + elTxt2.scrollHeight) + 'px';
+  }
+
+
+  document.getElementById('buttonClear').onclick = function() {
+    fillBoth('Cleared', { terms: [], conns: [] })
+  }
+
+
+  document.getElementById('buttonExample1').onclick = function() {
+    fillBoth('Example 1', {
+      terms: [
+        { str: 'John',    classID: 'http://ont.ex/John',    instID: 'http://db.ex/00' },
+        { str: 'eats',    classID: 'http://ont.ex/to-eat',  instID: 'http://db.ex/01' },
+        { str: 'chicken', classID: 'http://ont.ex/chicken', instID: 'http://db.ex/02' },
+        { str: 'with',    classID: 'http://ont.ex/to-use',  instID: 'http://db.ex/03' },
+        { str: 'fork',    classID: 'http://ont.ex/fork',    instID: 'http://db.ex/04' }
+      ],
+      conns: [
+        { type: 'T', pos: [ 0, 1, 2 ] },
+        { type: 'T', pos: [ 1, 3, 4 ] }
+      ]
+    });
+  }
+
+
+  document.getElementById('buttonExample2').onclick = function() {
+    fillBoth('Example 2', {
+      terms: [
+        { str: 'John',      classID: 'http://ont.ex/John',          instID: null },
+        { str: 'saying',    classID: 'http://ont.ex/to-say',        instID: null },
+        { str: 'duck',      classID: 'http://ont.ex/duck'                        },  // Class
+        { str: 'has-label', classID: 'http://ont.ex/to-have-label', instID: null },
+        { str: 'canard'                                                          },  // Literal
+        { str: 'implies',   classID: 'http://ont.ex/to-imply',      instID: null },
+        { str: 'he',        classID: 'http://ont.ex/John',          instID: null, parentID: null },  // RefInstance
+        { str: 'knows',     classID: 'http://ont.ex/to-know',       instID: null },
+        { str: 'French',    classID: null,                          instID: null }   // =request to create new Class.
+      ],
+      conns: [
+        { type: 'T', pos: [ 2, 3, 4 ] },
+        { type: 'T', pos: [ 0, 1, 3 ] },
+        { type: 'T', pos: [ 6, 7, 8 ] },
+        { type: 'T', pos: [ 1, 5, 7 ] },
+        { type: 'R', pos: [ 6, 0 ] }
+      ]
+    });
+  }
+
+
+  document.getElementById('buttonExample3').onclick = function() {
+    fillBoth('Example 3', {
+      terms: [
+        { str: 'John',          classID: 'http://ont.ex/John',          instID: 'http://db.ex/00' },
+        { str: 'pushes',        classID: 'http://ont.ex/to-push',       instID: 'http://db.ex/01' },
+        { str: 'button',        classID: 'http://ont.ex/button',        instID: 'http://db.ex/02' },
+        { str: 'having color',  classID: 'http://ont.ex/to-have-color', instID: 'http://db.ex/03' },
+        { str: 'green',         classID: 'http://ont.ex/green',         instID: 'http://db.ex/04' },
+        { str: 'causing',       classID: 'http://ont.ex/to-cause',      instID: 'http://db.ex/05' },
+        { str: 'it',            classID: 'http://ont.ex/button',        instID: 'http://db.ex/06', parentID: 'http://db.ex/02' },
+        { str: 'to have color', classID: 'http://ont.ex/to-have-color', instID: 'http://db.ex/07' },
+        { str: 'red',           classID: 'http://ont.ex/red',           instID: 'http://db.ex/08' },
+        { str: 'and',           classID: 'http://ont.ex/and',           instID: 'http://db.ex/09' },
+        { str: 'tiny',          classID: 'http://ont.ex/tiny',          instID: 'http://db.ex/10' },
+        { str: 'bomb',          classID: 'http://ont.ex/bomb',          instID: 'http://db.ex/11' },
+        { str: 'to explode',    classID: 'http://ont.ex/to-explode',    instID: 'http://db.ex/12' }
+      ],
+      conns: [
+        { type: 'T', pos: [ 2, 3, 4 ] },
+        { type: 'T', pos: [ 0, 1, 2 ] },
+        { type: 'T', pos: [ 6, 7, 8 ] },
+        { type: 'T', pos: [ 11, -1, 10 ] },
+        { type: 'T', pos: [ 11, 12, -1 ] },
+        { type: 'L', pos: [ 9, 7, 12 ] },
+        { type: 'T', pos: [ 1, 5, 9 ] },
+        { type: 'R', pos: [ 6, 2 ] }
+      ]
+    });
+  }
+
+
+  function fillBoth(name, data) {
+    var vsm = JSON.parse(JSON.stringify(data));  // Clone=>new Object.
+    elBox.initialValue = vsm;
+    boxValueToStateText(data);
+    setMsg(name);
+    updateRdf(vsm);
+  }
+
+  </script>
+
 </body>
-
-<script>
-  var vsmbox = document.getElementsByTagName('vsm-box')[0];
-
-  vsmbox.initialValue = {
-    terms: [
-      { str: 'John',    classID: 'http://ont.ex/John',    instID: 'http://db.ex/00' },
-      { str: 'eats',    classID: 'http://ont.ex/to-eat',  instID: 'http://db.ex/01' },
-      { str: 'chicken', classID: 'http://ont.ex/chicken', instID: 'http://db.ex/02' },
-      { str: 'with',    classID: 'http://ont.ex/to-use',  instID: 'http://db.ex/03' },
-      { str: 'fork',    classID: 'http://ont.ex/fork',    instID: 'http://db.ex/04' }
-    ],
-    conns: [
-      { type: 'T', pos: [ 0, 1, 2 ] },
-      { type: 'T', pos: [ 1, 3, 4 ] }
-    ]
-  };
-
-</script>
 </html>
