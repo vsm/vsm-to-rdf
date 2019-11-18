@@ -86,9 +86,9 @@
     <vsm-box id="vsmBox"></vsm-box>
 
     <div id="msg"></div>
-    <textarea id="stateText" rows="23" cols="80" spellcheck="false"></textarea>
+    <textarea id="stateText" rows="21" cols="80" spellcheck="false"></textarea>
     <div id="msg2">--&gt; vsm-to-rdf</div>
-    <textarea id=  "rdfText" rows="4" cols="80" readonly          ></textarea>
+    <textarea id=  "rdfText" rows="31" cols="100" readonly         ></textarea>
   </div>
 
 
@@ -204,10 +204,6 @@
       elTxt2.innerHTML =
         'Can not load \'dist/vsm-to-rdf.min.js\'.\nRun \'npm run build\' to create it.';
     }
-
-    // Auto-grow rdfText's height.
-    elTxt2.style.width  = (25 + elTxt2.scrollWidth ) + 'px';
-    elTxt2.style.height = (25 + elTxt2.scrollHeight) + 'px';
   }
 
 
