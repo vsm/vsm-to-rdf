@@ -21,7 +21,7 @@
     "conversion"
   ],
   "author": "Steven Vercruysse (http://stcruy.com)",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/vsmjs/vsm-to-rdf/issues"
   },

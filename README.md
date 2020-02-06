@@ -534,3 +534,9 @@ http://db.ex/07 vsmo:has-next-element http://db.ex/12 .
 http://db.ex/05 vsmo:has-agent http://db.ex/01 ; vsmo:acts-on http://db.ex/09 .
 http://db.ex/06 vsmo:has-parent http://db.ex/02 .
 ```
+
+<br>
+
+## License
+
+This project is licensed under the AGPL license - see [LICENSE.md](LICENSE.md).
