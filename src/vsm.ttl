@@ -1,0 +1,18 @@
+# VSM primitive relations and concepts
+# ====================================
+
+@prefix :     <http://w3id.org/vsm/vsm#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+:primitiveRelation a rdf:Property .
+
+:subject   a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
+:object    a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
+:attribute a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
+:first     a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
+:next      a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
+:parent    a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
+
+:Relation  a rdfs:Class .
+:Attribute a rdfs:Class ; rdfs:subClassOf :Relation .
