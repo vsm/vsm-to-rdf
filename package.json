@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vsmjs/vsm-to-rdf"
+    "url": "git+https://github.com/vsm/vsm-to-rdf"
   },
   "keywords": [
     "VSM",
@@ -23,9 +23,9 @@
   "author": "Steven Vercruysse (http://stcruy.com)",
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/vsmjs/vsm-to-rdf/issues"
+    "url": "https://github.com/vsm/vsm-to-rdf/issues"
   },
-  "homepage": "https://github.com/vsmjs/vsm-to-rdf#readme",
+  "homepage": "https://github.com/vsm/vsm-to-rdf#readme",
   "devDependencies": {
     "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.7.1",

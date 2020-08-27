@@ -8,7 +8,7 @@
 This module provides a single function that converts VSM-JSON to
 [RDF](https://www.w3.org/RDF/) [Turtle](https://www.w3.org/TR/turtle/) format.
 <br>VSM-JSON is the output emitted by a
-[vsm-box](https://github.com/vsmjs/vsm-box) web-component, and can be given
+[vsm-box](https://github.com/vsm/vsm-box) web-component, and can be given
 either as a JSON String or as a not-stringified JS Object.
 
 This module does not check for all possible syntactic errors in the given
