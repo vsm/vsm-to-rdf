@@ -1,6 +1,6 @@
 {
   "name": "vsm-to-rdf",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Converts VSM-JSON to RDF",
   "main": "src/index.js",
   "scripts": {
