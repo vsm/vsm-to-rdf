@@ -5,14 +5,14 @@
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-:primitiveRelation a rdf:Property .
+:primitive a rdf:Property .
 
-:subject   a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
-:object    a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
-:attribute a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
-:first     a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
-:next      a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
-:parent    a rdf:Property ; rdfs:subPropertyOf :primitiveRelation .
+:subject   a rdf:Property ; rdfs:subPropertyOf :primitive .
+:object    a rdf:Property ; rdfs:subPropertyOf :primitive .
+:attribute a rdf:Property ; rdfs:subPropertyOf :primitive .
+:first     a rdf:Property ; rdfs:subPropertyOf :object .
+:next      a rdf:Property ; rdfs:subPropertyOf :primitive .
+:parent    a rdf:Property ; rdfs:subPropertyOf :primitive .
 
 :Relation  a rdfs:Class .
 :Attribute a rdfs:Class ; rdfs:subClassOf :Relation .
