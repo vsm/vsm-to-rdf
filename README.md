@@ -1,5 +1,9 @@
 # vsm-to-rdf
 
+<br>
+
+_**Announcement**:&nbsp;
+I plan to **update** some parts below. Come for more on Mon 18 Jan!_ &nbsp;🚀
 
 <br>
 
