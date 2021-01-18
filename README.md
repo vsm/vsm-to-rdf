@@ -3,7 +3,12 @@
 <br>
 
 _**Announcement**:&nbsp;
-I plan to **update** some parts below. Come for more on Mon 18 Jan!_ &nbsp;🚀
+I plan to **update** some parts below. Come for more by the end of January!_ &nbsp;🚀
+
+This animation summarizes the upcoming update at [1:31](http://www.youtube.com/watch?v=0kHWBZIL04E):
+
+[![](http://img.youtube.com/vi/0kHWBZIL04E/0.jpg)](http://www.youtube.com/watch?v=0kHWBZIL04E "Animation: From a natural language sentence to a VSM semantic structure.")
+
 
 <br>
 
