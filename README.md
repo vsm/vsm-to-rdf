@@ -3,7 +3,7 @@
 <br>
 
 _**Announcement**:&nbsp;
-I plan to **update** some parts below. (In line with section ['iv. Critical remarks'](README.md#iv-----critical-remarks----) and [vsm.ttl](vsm.ttl), among others)._
+I plan to **update** some parts below. &nbsp;(In line with [section iv.](README.md#iv-----critical-remarks----) and [vsm.ttl](vsm.ttl), among others)._
 
 For now, this animated video summarizes the upcoming update at [1:32](http://www.youtube.com/watch?v=0kHWBZIL04E&t=92):
 
