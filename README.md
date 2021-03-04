@@ -3,9 +3,9 @@
 <br>
 
 _**Announcement**:&nbsp;
-I plan to **update** some parts below. Come for more by the end of January!_ &nbsp;🚀
+I plan to **update** some parts below. (In line with section ['iv. Critical remarks'](README.md#iv-----critical-remarks----) and [vsm.ttl](vsm.ttl), among others)._
 
-This animation summarizes the upcoming update at [1:32](http://www.youtube.com/watch?v=0kHWBZIL04E&t=92):
+For now, this animated video summarizes the upcoming update at [1:32](http://www.youtube.com/watch?v=0kHWBZIL04E&t=92):
 
 [![](http://img.youtube.com/vi/0kHWBZIL04E/0.jpg)](http://www.youtube.com/watch?v=0kHWBZIL04E "Animation: From a natural language sentence to a VSM semantic structure.")
 
