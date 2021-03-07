@@ -5,7 +5,8 @@
 _**Announcement**:&nbsp;
 An **update** is planned for some parts below &nbsp;(in line with [section iv.](README.md#iv-----critical-remarks----) and [vsm.ttl](vsm.ttl), among others)._
 
-This figure (from [this](https://youtu.be/0kHWBZIL04E) animated video) summarizes the upcoming update:  
+This figure (from [this](https://youtu.be/0kHWBZIL04E) animation) summarizes the upcoming update:
+
 ![](imgs/vsm-elements.svg)
 
 This update is already visible on [vsm.github.io/demo](https://vsm.github.io/demo) (as a patch): choose an example and click 'Show RDF' to see it.
