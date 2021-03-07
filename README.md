@@ -3,11 +3,12 @@
 <br>
 
 _**Announcement**:&nbsp;
-I plan to **update** some parts below. &nbsp;(In line with [section iv.](README.md#iv-----critical-remarks----) and [vsm.ttl](vsm.ttl), among others)._
+An **update** is planned for some parts below &nbsp;(in line with [section iv.](README.md#iv-----critical-remarks----) and [vsm.ttl](vsm.ttl), among others)._
 
-For now, this animated video summarizes the upcoming update at [1:32](http://www.youtube.com/watch?v=0kHWBZIL04E&t=92):
+This figure (from [this](https://youtu.be/0kHWBZIL04E) animated video) summarizes the upcoming update:  
+![](imgs/vsm-elements.svg)
 
-[![](http://img.youtube.com/vi/0kHWBZIL04E/0.jpg)](http://www.youtube.com/watch?v=0kHWBZIL04E "Animation: From a natural language sentence to a VSM semantic structure.")
+This update is already visible on [vsm.github.io/demo](https://vsm.github.io/demo) (as a patch): choose an example and click 'Show RDF' to see it.
 
 
 <br>
